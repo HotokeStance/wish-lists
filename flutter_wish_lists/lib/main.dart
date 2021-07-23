@@ -8,6 +8,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: WishList(),
+      home: WishList(routeObserver: routeObserver),
+      navigatorObservers: [ routeObserver ],
     );
   }
 }

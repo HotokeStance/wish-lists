@@ -5,15 +5,37 @@ import 'package:flutter_wish_lists/src/page/input_item_detail_page.dart';
 import 'package:flutter_wish_lists/src/page/input_item_edit_page.dart';
 import 'package:flutter_wish_lists/src/model/wish_item_model.dart';
 import 'package:flutter_wish_lists/src/widget/wish_card_widget.dart';
+import 'package:flutter/src/widgets/routes.dart';
 
 class WishList extends StatefulWidget {
+  final RouteObserver<PageRoute> routeObserver;
+  const WishList({Key? key, required this.routeObserver}) :super(key: key);
+
   @override
   _WishListState createState() => _WishListState();
 }
 
-class _WishListState extends State<WishList> {
+class _WishListState extends State<WishList> with RouteAware {
   late List<WishItem> wishItemsList;
   bool isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    widget.routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    widget.routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // 一度、別の画面に遷移したあとで、再度この画面に戻ってきた時にコールされる。
+    refreshWishItems();
+  }
 
   @override
   void initState() {
@@ -27,8 +49,6 @@ class _WishListState extends State<WishList> {
     setState(() {
       isLoading = true;
     });
-
-    debugPrint('wishListが走るよ');
 
     this.wishItemsList = await WishItemsDatabase.instance.getAllWishItems();
 

@@ -26,6 +26,7 @@ class WishCardWidget extends StatelessWidget {
     return Card(
       color: color,
       child: Container(
+        // カードのサイズ
         constraints: BoxConstraints(minHeight: minHeight),
         padding: EdgeInsets.all(8),
         child: Column(

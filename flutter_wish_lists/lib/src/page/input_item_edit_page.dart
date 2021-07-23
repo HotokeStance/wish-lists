@@ -69,10 +69,8 @@ class _InputItemState extends State<InputItemEditPage> {
       final isUpdating = widget.wishItem != null;
 
       if (isUpdating) {
-        debugPrint('更新です');
         await updateWishItem();
       } else {
-        debugPrint('追加です');
         await addWishItem();
       }
 
