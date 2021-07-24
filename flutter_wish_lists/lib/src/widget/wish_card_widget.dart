@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wish_lists/src/model/wish_item_model.dart';
+import 'package:intl/intl.dart';
 
 final _lightColors = [
   Colors.amber.shade300,
@@ -17,11 +18,18 @@ class WishCardWidget extends StatelessWidget {
 
   const WishCardWidget({Key? key, required this.wishItem, required this.index}) : super(key: key);
 
+  // 金額を3桁区切りにする
+  moneyFormat(money) {
+    final formatter = NumberFormat("#,###");
+    var castMoney = int.parse(money);
+    return formatter.format(castMoney).toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     /// Pick colors from the accent colors based on index
     final color = _lightColors[index % _lightColors.length];
-    final minHeight = getMinHeight(index);
+    final minHeight = 100.0;
 
     return Card(
       color: color,
@@ -35,36 +43,20 @@ class WishCardWidget extends StatelessWidget {
           children: [
             Text(
               wishItem.wishItemName != null ? wishItem.wishItemName: '',
-              style: TextStyle(color: Colors.grey.shade700),
-            ),
-            SizedBox(height: 4),
-            Text(
-              wishItem.money.toString() != null ? wishItem.money.toString() : '',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 4),
+            Text(
+              wishItem.money.toString() != null ? moneyFormat(wishItem.money.toString()) : '',
+              style: TextStyle(color: Colors.grey.shade700),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  /// To return different height for different widgets
-  double getMinHeight(int index) {
-    switch (index % 4) {
-      case 0:
-        return 100;
-      case 1:
-        return 150;
-      case 2:
-        return 150;
-      case 3:
-        return 100;
-      default:
-        return 100;
-    }
   }
 }

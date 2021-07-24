@@ -6,6 +6,7 @@ import 'package:flutter_wish_lists/src/page/input_item_edit_page.dart';
 import 'package:flutter_wish_lists/src/model/wish_item_model.dart';
 import 'package:flutter_wish_lists/src/widget/wish_card_widget.dart';
 import 'package:flutter/src/widgets/routes.dart';
+import 'package:intl/intl.dart';
 
 class WishList extends StatefulWidget {
   final RouteObserver<PageRoute> routeObserver;
@@ -57,6 +58,26 @@ class _WishListState extends State<WishList> with RouteAware {
     });
   }
 
+  // 金額を3桁区切りにする
+  moneyFormat(money) {
+    final formatter = NumberFormat("#,###");
+    var castMoney = int.parse(money);
+    return formatter.format(castMoney).toString();
+  }
+
+  // 欲しいものリストの合計金額を返す
+  @override
+  calcWishItemsTotalMoney() {
+    var totalMoney = null;
+    if (this.wishItemsList != null && this.wishItemsList.isEmpty) {
+      for (var i = 0; i < this.wishItemsList.length; i += 1) {
+        totalMoney += int.parse(this.wishItemsList[i].money);
+      }
+      totalMoney = moneyFormat(totalMoney);
+    }
+    return totalMoney;
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
@@ -82,6 +103,16 @@ class _WishListState extends State<WishList> with RouteAware {
         )
       },
     ),
+  );
+
+  Widget wishItemTotal() => TextFormField(
+    readOnly: true,
+    initialValue: wishItemsList.length.toString(),
+  );
+
+  Widget wishItemTotalMoney() => TextFormField(
+    readOnly: true,
+    initialValue: calcWishItemsTotalMoney().toString(),
   );
 
   Widget buildWishItems() => StaggeredGridView.countBuilder(
