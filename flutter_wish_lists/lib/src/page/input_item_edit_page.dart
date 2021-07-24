@@ -63,7 +63,6 @@ class _InputItemState extends State<InputItemEditPage> {
 
   void addOrUpdateWishItem() async {
     final isValid = _formKey.currentState!.validate();
-    debugPrint('isValid is ${isValid}');
 
     if (isValid) {
       final isUpdating = widget.wishItem != null;
