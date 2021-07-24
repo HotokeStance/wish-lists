@@ -19,6 +19,9 @@ class WishList extends StatefulWidget {
 class _WishListState extends State<WishList> with RouteAware {
   late List<WishItem> wishItemsList;
   bool isLoading = false;
+  int wishItemCount = 0;
+  String wishItemTotalMoney = '0';
+
 
   @override
   void didChangeDependencies() {
@@ -52,30 +55,44 @@ class _WishListState extends State<WishList> with RouteAware {
     });
 
     this.wishItemsList = await WishItemsDatabase.instance.getAllWishItems();
+    returnItemLength();
+    calcWishItemsTotalMoney();
 
     setState(() {
       isLoading = false;
     });
   }
 
+  // リストの長さを返す
+  @override
+  returnItemLength() {
+    int result = 0;
+    if (this.wishItemsList != null && this.wishItemsList.isNotEmpty) {
+      result = this.wishItemsList.length;
+    }
+    this.wishItemCount = result;
+  }
+
   // 金額を3桁区切りにする
-  moneyFormat(money) {
+  @override
+  moneyFormat(int money) {
     final formatter = NumberFormat("#,###");
-    var castMoney = int.parse(money);
-    return formatter.format(castMoney).toString();
+    int castMoney = money;
+    return formatter.format(castMoney);
   }
 
   // 欲しいものリストの合計金額を返す
   @override
   calcWishItemsTotalMoney() {
-    var totalMoney = null;
-    if (this.wishItemsList != null && this.wishItemsList.isEmpty) {
-      for (var i = 0; i < this.wishItemsList.length; i += 1) {
+    int totalMoney = 0;
+    String result = '';
+    if (this.wishItemsList != null && this.wishItemsList.isNotEmpty) {
+      for (var i = 0; i < this.wishItemsList.length; i ++) {
         totalMoney += int.parse(this.wishItemsList[i].money);
       }
-      totalMoney = moneyFormat(totalMoney);
+       result = moneyFormat(totalMoney);
     }
-    return totalMoney;
+    this.wishItemTotalMoney = result;
   }
 
   @override
@@ -85,13 +102,39 @@ class _WishListState extends State<WishList> with RouteAware {
         'Wish List',
       ),
     ),
-    body: Center(
-      child: isLoading
-        ? CircularProgressIndicator()
-        : wishItemsList == null || wishItemsList.isEmpty
-          ? Text(
-        'No Wish Item',
-      ): buildWishItems(),
+    body: Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'アイテム数: ${wishItemCount.toString()}',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
+          Text(
+            '合計金額: ${wishItemTotalMoney}',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
+          Expanded(
+              child: isLoading ? CircularProgressIndicator() : wishItemsList == null || wishItemsList.isEmpty ?
+                  Text(
+                    'No Wish Items',
+                    style: TextStyle(
+                      color: Colors.white70,
+                    ),
+                  ) : buildWishItems(),
+          ),
+        ],
+      ),
     ),
     floatingActionButton: FloatingActionButton(
       tooltip: 'Increment',
@@ -103,16 +146,6 @@ class _WishListState extends State<WishList> with RouteAware {
         )
       },
     ),
-  );
-
-  Widget wishItemTotal() => TextFormField(
-    readOnly: true,
-    initialValue: wishItemsList.length.toString(),
-  );
-
-  Widget wishItemTotalMoney() => TextFormField(
-    readOnly: true,
-    initialValue: calcWishItemsTotalMoney().toString(),
   );
 
   Widget buildWishItems() => StaggeredGridView.countBuilder(
