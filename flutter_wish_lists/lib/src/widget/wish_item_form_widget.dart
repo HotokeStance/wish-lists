@@ -40,7 +40,7 @@ class WishItemFormWidget extends StatelessWidget {
     ),
     decoration: InputDecoration(
       border: InputBorder.none,
-      hintText: 'WishItemName',
+      hintText: '欲しいもの',
       hintStyle: TextStyle(color: Colors.white70),
     ),
     validator: (wishItemName) =>
@@ -55,7 +55,7 @@ class WishItemFormWidget extends StatelessWidget {
     style: TextStyle(color: Colors.white60, fontSize: 18),
     decoration: InputDecoration(
       border: InputBorder.none,
-      hintText: 'WishItems money',
+      hintText: '金額',
       hintStyle: TextStyle(color: Colors.white60),
     ),
     validator: (money) =>

@@ -126,12 +126,19 @@ class _WishListState extends State<WishList> with RouteAware {
           ),
           Expanded(
               child: isLoading ? CircularProgressIndicator() : wishItemsList == null || wishItemsList.isEmpty ?
-                  Text(
-                    'No Wish Items',
-                    style: TextStyle(
-                      color: Colors.white70,
-                    ),
-                  ) : buildWishItems(),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '欲しいものがありません',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      ),
+                    )
+                  ],
+                ),
+              ) : buildWishItems(),
           ),
         ],
       ),
